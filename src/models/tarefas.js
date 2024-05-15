@@ -1,6 +1,5 @@
 const database = require("../database/database")
 const Sequelize = require("sequelize")
-const Responsaveis = require("./responsaveis")
 
 /*  
     Id (int),
@@ -34,7 +33,5 @@ const Tarefas = database.define("tarefas", {
 }, {
     timestamp: true
 })
-
-Tarefas.belongsTo(Responsaveis)
 
 module.exports = Tarefas

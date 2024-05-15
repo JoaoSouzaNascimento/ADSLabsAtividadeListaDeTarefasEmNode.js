@@ -1,6 +1,6 @@
 const database = require("../database/database")
 const Sequelize = require("sequelize")
-
+const Tarefas = require ("./tarefas")
 /*  
     Id (int),
     Nome (minimo 3 caracteres), 
@@ -23,5 +23,7 @@ const Responsaveis = database.define("responsaveis", {
 }, {
     timestamp: true
 })
+
+Responsaveis.hasMany(Tarefas)
 
 module.exports = Responsaveis
