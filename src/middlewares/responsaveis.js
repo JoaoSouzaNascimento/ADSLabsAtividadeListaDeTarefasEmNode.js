@@ -13,13 +13,19 @@ function checkNome (req, res, next) {
     return next()
 }
 
-function blockNome (req, res, next) {
+function haveNome (req, res, next) {
     const nome = req.body.nome;
 
     if(!nome)
-        return next();
+        return next()
 
-    return res.status(400).send({ message: "Acesso ao nome do responsavel bloqueado"});
+    if(!/^[A-Za-z]+$/.test(nome))
+        return res.status(400).send({ message: "O nome deve conter apenas letras"});
+
+    if(nome.length < 3)
+        return res.status(400).send({ message: "O nome deve ter pelo menos 3 letras"});
+
+    return next()
 }
 
 function checkData (req, res, next) {
@@ -30,7 +36,7 @@ function checkData (req, res, next) {
 
     const data = new Date(data_nascimento);
     
-    if(isNaN(data.getTime())) // verifica se a data é inválida
+    if(isNaN(data.getTime())) 
         return res.status(400).send({ message: "Por favor envie uma data válida"});
 
     const ano = data.getFullYear();
@@ -41,14 +47,23 @@ function checkData (req, res, next) {
     return next();
 }
 
-function blockData (req, res, next) {
+function haveData (req, res, next) {
     const data_nascimento = req.body.data_nascimento;
 
     if(!data_nascimento)
-        return next();
+        return next()
 
-    return res.status(400).send({ message: "Acesso a data de nascimento do responsavel bloqueado"});
+    const data = new Date(data_nascimento);
+    
+    if(isNaN(data.getTime()))
+        return res.status(400).send({ message: "Por favor envie uma data válida"});
+
+    const ano = data.getFullYear();
+    
+    if(ano < 1900 || ano > 2014)
+        return res.status(400).send({ message: "O ano de nascimento deve estar entre 1900 e 2014"});
+
+    return next();
 }
 
-
-module.exports = {checkNome, blockNome, checkData, blockData}
+module.exports = {checkNome, haveNome, checkData, haveData}
