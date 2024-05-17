@@ -1,6 +1,6 @@
 const database = require("../database/database")
 const Sequelize = require("sequelize")
-
+const Responsaveis = require("../models/responsaveis")
 /*  
     Id (int),
     Título,
@@ -9,7 +9,7 @@ const Sequelize = require("sequelize")
     Data data de conclusao
 */
 const Tarefas = database.define("tarefas", {
-    id: {
+    id_tarefa: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true
@@ -26,12 +26,20 @@ const Tarefas = database.define("tarefas", {
         type: Sequelize.DATEONLY,
         allowNull: false
     },
-    concluida: {
+    data_conclusao: {
         type: Sequelize.DATEONLY,
+        allowNull: true
+    },
+    status: {
+        type: Sequelize.ENUM,
+        values: ['atribuido', 'entregue', 'pendente'],
         allowNull: false
     }
 }, {
     timestamp: true
 })
+
+Responsaveis.hasMany(Tarefas);
+Tarefas.belongsTo(Responsaveis);
 
 module.exports = Tarefas

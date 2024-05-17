@@ -4,7 +4,27 @@ function list(req, res) {
     service.list(req.query)
         .then((responsaveis) => {
             return res.send({ dados: responsaveis })
+        }), (error) => {
+            return res.status(500).send({ message: error })
+        }
+}
+function listTarefas(req, res) {
+    service.listTarefas(req.params.id, req.query)
+        .then((responsavelTarefas) => {
+            return res.send({
+                responsavel: responsavelTarefas
+            })
+        }, (error) => {
+            return res.status(500).send({ message: error })
         })
+}
+function listResponsaveisSemTarefasAtribuidas(req, res) {
+    service.listResponsaveisSemTarefasAtribuidas()
+        .then((responsaveis) => {
+            return res.send({ dados: responsaveis })
+        }), (error) => {
+            return res.status(500).send({ message: error })
+        }
 }
 function create(req, res) {
     service.create(req.body)
@@ -20,13 +40,12 @@ function create(req, res) {
 function update(req, res) {
     service.update(req.params.id, req.body)
         .then((responsavelEditado) => {
-            console.log(responsavelEditado)
             if(!responsavelEditado)
                 return res.send({ message: "Responsavel não foi encontrado"})
 
             return res.send({
                 message: "Responsavel editado com sucesso",
-                pessoa: responsavelEditado
+                responsavel: responsavelEditado
             })
         }, (error) => {
             return res.status(500).send({ message: error })
@@ -47,4 +66,4 @@ function remove(req, res) {
         })
 }
 
-module.exports = {list, create, update, remove} 
+module.exports = {list, create, update, remove, listTarefas,listResponsaveisSemTarefasAtribuidas} 
