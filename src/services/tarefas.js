@@ -1,27 +1,62 @@
 const Tarefas = require("../models/tarefas")
+const Responsaveis = require("../models/responsaveis")
 
 async function list(queryParams) {
     return await Tarefas.findAll( { where: queryParams } )
 }
-async function create(dados) {
-    const novaTarefa = await Tarefas.create(dados)
 
-    return novaTarefa
+async function create(idResponsavel, dados) {
+    const responsavelEncontrado = await Responsaveis.findByPk(idResponsavel)
+
+    if(responsavelEncontrado) {
+        let tarefa = dados
+        tarefa.status = "atribuido"
+        tarefa.responsavelId = idResponsavel
+        return await Tarefas.create(tarefa)
+    }
+
+    return responsavelEncontrado
 }
+
 async function update(idTarefa, dados) {
     const tarefaEncontrada = await Tarefas.findByPk(idTarefa)
 
     if(tarefaEncontrada){
         tarefaEncontrada.titulo = dados.titulo ?? tarefaEncontrada.titulo
         tarefaEncontrada.descricao = dados.descricao
-        tarefaEncontrada.data_limite = dados.data_limite ?? tarefaEncontrada.data_limite
-        tarefaEncontrada.data_conclusao = dados.data_conclusao 
-        tarefaEncontrada.concluida = dados.concluida
+        tarefaEncontrada.data_limite = dados.data_limite  ?? tarefaEncontrada.data_limite
+        if(await Responsaveis.findByPk(dados.responsavelId))
+            tarefaEncontrada.responsavelId = dados.responsavelId ?? tarefaEncontrada.responsavelId
+
+        if(dados.data_limite && tarefaEncontrada.status == 'pendente') {
+            tarefaEncontrada.data_conclusao = null
+            tarefaEncontrada.status = 'atribuido'
+        }
+
+        if(dados.data_conclusao){    
+            let dados_data_conclusao = new Date(dados.data_conclusao);
+            let tarefa_data_limite = new Date(tarefaEncontrada.data_limite);
+
+            if(dados_data_conclusao <= tarefa_data_limite)  {
+                tarefaEncontrada.status = 'entregue'
+                tarefaEncontrada.data_conclusao = dados.data_conclusao
+            } else {
+                tarefaEncontrada.status = 'pendente'
+                tarefaEncontrada.data_conclusao = null
+            }
+        }
+
+        if(tarefaEncontrada.data_conclusao && dados.status == 'atribuido' && tarefaEncontrada.status == 'entregue'){
+            tarefaEncontrada.data_conclusao = null
+            tarefaEncontrada.status = 'atribuido'
+        }
+
         await tarefaEncontrada.save();
     }
 
     return tarefaEncontrada
 }
+
 async function remove(idTarefa) {
     const tarefaEncontrada = await Tarefas.findByPk(idTarefa)
     if(tarefaEncontrada)

@@ -1,5 +1,4 @@
 const Sequelize = require("sequelize")
-const { FORCE } = require("sequelize/lib/index-hints")
 
 const database = new Sequelize(
     process.env.DB_NAME,

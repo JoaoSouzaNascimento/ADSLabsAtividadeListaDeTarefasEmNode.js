@@ -5,6 +5,7 @@ const { Op } = require('sequelize');
 async function list(queryParams) {
     return await Responsaveis.findAll({ where: queryParams })
 }
+
 async function listResponsaveisSemTarefasAtribuidas() {
     const responsaveisComTarefasAtribuidas = await Responsaveis.findAll({
         include: {
@@ -26,15 +27,18 @@ async function listResponsaveisSemTarefasAtribuidas() {
         },
     });
 }
+
 async function listTarefas(idResponsavel, queryParams) {
     const responsavelEncontrado = await Responsaveis.findByPk(idResponsavel)
     return await responsavelEncontrado.getTarefas({where: queryParams})
 }
+
 async function create(dados) {
     const novoResponsavel = await Responsaveis.create(dados)
 
     return novoResponsavel
 }
+
 async function update(idResponsavel, dados) {
     const responsavelEncontrado = await Responsaveis.findByPk(idResponsavel)
 
@@ -46,6 +50,7 @@ async function update(idResponsavel, dados) {
 
     return responsavelEncontrado
 }
+
 async function remove(idResponsavel) {
     const responsavelEncontrado = await Responsaveis.findByPk(idResponsavel)
     if(responsavelEncontrado)

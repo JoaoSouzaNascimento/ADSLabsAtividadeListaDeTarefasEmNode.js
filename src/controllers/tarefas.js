@@ -9,8 +9,11 @@ function list(req, res) {
         }
 }
 function create(req, res) {
-    Service.create(req.body)
+    Service.create(req.params.id, req.body)
         .then((tarefaCriada) => {
+            if(!tarefaCriada)
+                return res.send({ message: "Responsável não foi encontrado"})
+
             return res.status(201).send({
                 message: "Nova tarefa criada com sucesso",
                 tarefa: tarefaCriada
@@ -26,13 +29,14 @@ function update(req, res) {
                 return res.send({ message: "Tarefa não foi encontrada"})
 
             return res.send({
-                message: "Tarefa editada com sucesso",
+                message: "Tarefa atualizada com sucesso",
                 tarefa: tarefaEditada
             })
         }, (error) => {
             return res.status(500).send({ message: error })
         })
 }
+
 function remove(req, res) {
     Service.remove(req.params.id)
         .then((tarefaRemovida) => {

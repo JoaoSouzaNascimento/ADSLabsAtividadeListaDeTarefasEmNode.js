@@ -1,0 +1,54 @@
+# ROTAS DE RESPONSÁVEIS -------------> /responsaveis
+
+GET /responsaveis : Lista todos os responsáveis cadastrados, atraves dos query params "?" é possivel filtrar por "nome", "data_nascimento" e "id_responsavel"
+
+GET /responsaveis/sem-tarefas-atribuidas : Lista todos os responsáveis que não possuem tarefas atribuidas 
+*nota: entendi como tarefas pendentes tarefas que não foram entregues e que não passaram do prazo ainda 
+
+POST /responsaveis : Cria um novo responsável
+{
+    "nome": "[<Nome>]",
+	"data_nascimento": "[<AAAA-MM-AA>]"
+}
+- Ambos os atributos são obrigatórios
+
+PUT /responsaveis/:id : Atualiza os dados de um responsável
+{
+    "nome": "[<Nome>]",
+	"data_nascimento": "[<AAAA-MM-AA>]"
+}
+- Todos os atributos podem ser modificados, cada um pode ser modificado individualmente. 
+
+DELETE /responsaveis/:id : Remove um responsável
+- Ao remover um responsavel a tarefa atrelada a ele terá sua chave estrangeira marcada como "null"
+
+ROTAS DE TAREFAS ------------> /tarefas:
+
+GET /tarefas : Lista todas as tarefas cadastradas, atraves dos query params "?" é possivel filtrar por "titulo", "descricao", "data_limite", "data_conclusao", "status".
+
+POST /tarefas/responsavel/:id : Cria uma nova tarefa
+{
+    "titulo": "[<titulo>]",
+    "descricao": "[<descricao>]",
+    "data_limite": "[<AAAA-MM-AA>]",
+    "data_conclusao": "[<AAAA-MM-AA>]",
+}
+- Apenas o titulo e data_limite são obrigatórios
+- o :id é o id do responsavel que a tarefa será atribuida
+
+PUT /tarefas/:id : Atualiza as informações de uma determinada tarefa
+{
+    "titulo": "[<titulo>]",
+    "descricao": "[<descricao>]",
+    "data_limite": "[<AAAA-MM-AA>]",
+    "data_conclusao": "[<AAAA-MM-AA>]",
+    "status": "[<status>]",
+}
+- status pode ser: "atribuido", "entregue", "pendente".
+- É possivel modificar cada campo individualmente, menos o status
+- Não é possivel explicitamente modificar os status, ele é modificado de acordo com a relação entre a data_conclusao e data_conclusao. 
+    *nota: só é possivel modificar explicitamente o status de "entregue" para o status de "atribuido"
+- A descricao e data_conclusao pode ser nula.
+- :id é o id da tarefa.
+
+DELETE /tarefas/:id : Remove uma tarefa

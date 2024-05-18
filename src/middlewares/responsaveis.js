@@ -41,8 +41,8 @@ function checkData (req, res, next) {
 
     const ano = data.getFullYear();
     
-    if(ano < 1900 || ano > 2014)
-        return res.status(400).send({ message: "O ano de nascimento deve estar entre 1900 e 2014"});
+    if(ano > 2014)
+        return res.status(400).send({ message: "O ano de nascimento deve ser até 2014"});
 
     return next();
 }
@@ -60,8 +60,8 @@ function haveData (req, res, next) {
 
     const ano = data.getFullYear();
     
-    if(ano < 1900 || ano > 2014)
-        return res.status(400).send({ message: "O ano de nascimento deve estar entre 1900 e 2014"});
+    if(ano > 2014)
+        return res.status(400).send({ message: "O ano de nascimento deve ser até 2014"});
 
     return next();
 }
