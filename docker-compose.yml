@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  app:
+    image: api-node-tarefas:1.0
+    container_name: api-node-tarefas-adslabs-1.0
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_NAME=api-node-tarefas-adslabs
+      - DB_DIALECT=mysql
+      - PORT=3000
+    depends_on:
+      - db
+  db:
+    image: mysql:8.4.0
+    container_name: mysqldb-8.4
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=api-node-tarefas-adslabs
+    volumes:
+      - db-data:/var/lib/mysql
+volumes:
+  db-data:
