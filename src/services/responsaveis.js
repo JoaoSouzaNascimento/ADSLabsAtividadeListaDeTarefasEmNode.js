@@ -7,22 +7,20 @@ async function list(queryParams) {
 }
 
 async function listResponsaveisSemTarefasAtribuidas() {
-    const responsaveisComTarefasAtribuidas = await Responsaveis.findAll({
-        include: {
-            model: Tarefas,
-            where: {
-            status: 'atribuido',
-            },
-            required: true,
+    const tarefasPendetes = await Tarefas.findAll({
+        attributes: ['responsavelId'],
+        where: {
+            status: 'pendente'
         },
-    });
+        raw: true
+    })
 
-    const idsResponsaveisComTarefasAtribuidas = responsaveisComTarefasAtribuidas.map(responsavel => responsavel.id_responsavel);
+    const ids = tarefasPendetes.map(tarefas => tarefas.responsavelId);
 
     return await Responsaveis.findAll({
         where: {
             id_responsavel: {
-                [Op.notIn]: idsResponsaveisComTarefasAtribuidas,
+                [Op.notIn]: ids,
             },
         },
     });

@@ -5,8 +5,8 @@ const middlewaresTarefas = require("../middlewares/tarefas")
 const router = express.Router()
 
 router.get("/", controller.list)
-router.post("/responsavel/:id", middlewaresTarefas.checkTitulo,middlewaresTarefas.checkDataLimite, controller.create)
-router.put("/:id", controller.update)
+router.post("/", middlewaresTarefas.checkTitulo, middlewaresTarefas.checkDataLimite, middlewaresTarefas.checkResponsavelId, controller.create)
+router.put("/:id", middlewaresTarefas.checkTitulo, middlewaresTarefas.checkResponsavelId, controller.update)
 router.delete("/:id", controller.remove)
 
 module.exports = router

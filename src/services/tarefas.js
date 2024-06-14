@@ -5,17 +5,10 @@ async function list(queryParams) {
     return await Tarefas.findAll( { where: queryParams } )
 }
 
-async function create(idResponsavel, dados) {
-    const responsavelEncontrado = await Responsaveis.findByPk(idResponsavel)
-
-    if(responsavelEncontrado) {
-        let tarefa = dados
-        tarefa.status = "atribuido"
-        tarefa.responsavelId = idResponsavel
-        return await Tarefas.create(tarefa)
-    }
-
-    return responsavelEncontrado
+async function create(dados) {
+    let tarefa = dados
+    tarefa.status = "pendente"
+    return await Tarefas.create(tarefa)
 }
 
 async function update(idTarefa, dados) {
@@ -24,13 +17,15 @@ async function update(idTarefa, dados) {
     if(tarefaEncontrada){
         tarefaEncontrada.titulo = dados.titulo ?? tarefaEncontrada.titulo
         tarefaEncontrada.descricao = dados.descricao
-        tarefaEncontrada.data_limite = dados.data_limite  ?? tarefaEncontrada.data_limite
+        
         if(await Responsaveis.findByPk(dados.responsavelId))
             tarefaEncontrada.responsavelId = dados.responsavelId ?? tarefaEncontrada.responsavelId
 
-        if(dados.data_limite && tarefaEncontrada.status == 'pendente') {
+
+        if(tarefaEncontrada.data_limite != dados.data_limite){
+            tarefaEncontrada.data_limite = dados.data_limite  ?? tarefaEncontrada.data_limite
             tarefaEncontrada.data_conclusao = null
-            tarefaEncontrada.status = 'atribuido'
+            tarefaEncontrada.status = 'pendente'
         }
 
         if(dados.data_conclusao){    
@@ -41,14 +36,9 @@ async function update(idTarefa, dados) {
                 tarefaEncontrada.status = 'entregue'
                 tarefaEncontrada.data_conclusao = dados.data_conclusao
             } else {
-                tarefaEncontrada.status = 'pendente'
+                tarefaEncontrada.status = 'expirado'
                 tarefaEncontrada.data_conclusao = null
             }
-        }
-
-        if(tarefaEncontrada.data_conclusao && dados.status == 'atribuido' && tarefaEncontrada.status == 'entregue'){
-            tarefaEncontrada.data_conclusao = null
-            tarefaEncontrada.status = 'atribuido'
         }
 
         await tarefaEncontrada.save();

@@ -14,6 +14,14 @@ const Tarefas = database.define("tarefas", {
         primaryKey: true,
         autoIncrement: true
     },
+    responsavelId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'responsaveis',
+          key: 'id_responsavel'
+        },
+        allowNull: false
+    },
     titulo: {
         type: Sequelize.STRING,
         allowNull: false
@@ -32,14 +40,14 @@ const Tarefas = database.define("tarefas", {
     },
     status: {
         type: Sequelize.ENUM,
-        values: ['atribuido', 'entregue', 'pendente'],
+        values: ['pendente', 'entregue', 'expirado'],
         allowNull: false
     }
 }, {
     timestamp: true
 })
 
-Responsaveis.hasMany(Tarefas, { foreignKey: "responsavelId" });
+Responsaveis.hasMany(Tarefas, { foreignKey: "responsavelId", onDelete: 'CASCADE' });
 Tarefas.belongsTo(Responsaveis, { foreignKey: "responsavelId" });
 
 module.exports = Tarefas

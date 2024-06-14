@@ -9,11 +9,8 @@ function list(req, res) {
         }
 }
 function create(req, res) {
-    Service.create(req.params.id, req.body)
+    Service.create(req.body)
         .then((tarefaCriada) => {
-            if(!tarefaCriada)
-                return res.send({ message: "Responsável não foi encontrado"})
-
             return res.status(201).send({
                 message: "Nova tarefa criada com sucesso",
                 tarefa: tarefaCriada
@@ -23,7 +20,13 @@ function create(req, res) {
         })
 }
 function update(req, res) {
-    Service.update(req.params.id, req.body)
+    data = req.body
+    for (let key in data) {
+        if (data[key] === "") {
+          data[key] = null;
+        }
+    }
+    Service.update(req.params.id, data)
         .then((tarefaEditada) => {
             if(!tarefaEditada)
                 return res.send({ message: "Tarefa não foi encontrada"})

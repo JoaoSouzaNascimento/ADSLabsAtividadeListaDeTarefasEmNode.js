@@ -38,6 +38,12 @@ function create(req, res) {
         })
 }
 function update(req, res) {
+    data = req.body
+    for (let key in data) {
+        if (data[key] === "") {
+          data[key] = null;
+        }
+    }
     service.update(req.params.id, req.body)
         .then((responsavelEditado) => {
             if(!responsavelEditado)
